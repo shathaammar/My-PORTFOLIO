@@ -11,6 +11,8 @@
 
   --color-card: hsl(var(--card));
 
+  --color-surface: #1a2329;
+
   --animate-float: float 6s ease-in-out infinite;
   --animate-fade-in: fade-in 0.7s ease-out forwards;
   --animate-fade-in-delay-1: fade-in 0.7s ease-out 0.2s forwards;
@@ -63,9 +65,9 @@
 
     --primary: 250 65% 65%;
     --primary-foreground: 213 31% 91%;
-    
+
     --card: 222 47% 8%;
-  } 
+  }
 
   * {
     @apply border-border;
@@ -77,10 +79,11 @@
 
   body {
     @apply bg-background text-foreground transition-colors duration-300;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
   }
 }
-
 
 @utility container {
   margin-inline: auto;
@@ -136,6 +139,14 @@
       infinite,
     drift var(--drift-duration, 20s) ease-in-out var(--star-delay, 0s) infinite
       alternate;
+}
+
+@layer components {
+  .glass {
+    background-color: color-mix(in srgb, var(--color-surface) 50%, transparent);
+    backdrop-filter: blur(16px);
+    border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+  }
 }
 
 @keyframes twinkle {

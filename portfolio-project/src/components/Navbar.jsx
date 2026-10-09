@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./ThemeToggle";
+import { MusicToggle } from "./MusicToggle";
 
 const navItems = [
   { name: "Home", href: "#home" },
@@ -20,7 +21,6 @@ export const Navbar = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 0);
 
-      // at the very top of the page, always highlight Home
       if (window.scrollY < 100) {
         setActiveSection("home");
       }
@@ -53,38 +53,125 @@ export const Navbar = () => {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (!isMenuOpen) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setIsMenuOpen(false);
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isMenuOpen]);
+
   const isActive = (href) => activeSection === href.substring(1);
 
-  return (
-    <nav
-      className={cn(
-        "fixed w-full z-40 transition-all duration-300",
-        isScrolled
-          ? "py-3 bg-background/80 backdrop-blur-md shadow-xs"
-          : "py-5",
-      )}
-    >
-      <div className="container relative flex items-center justify-between">
-        <a
-          className="text-xl font-bold text-primary flex items-center"
-          href="#home"
-        >
-          <span className="relative z-10">
-            <span className="text-glow text-foreground">ShathaTech</span>{" "}
-            Portfolio
-          </span>
-        </a>
+  const closeMenu = () => setIsMenuOpen(false);
 
-        {/* desktop nav */}
-        <div className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2 rounded-full px-2 py-1.5 bg-background/60 backdrop-blur-md border border-primary/15 shadow-sm">
+  return (
+    <>
+      <nav
+        className={cn(
+          "fixed w-full z-40 transition-all duration-300",
+          isScrolled
+            ? "py-3 bg-background/80 backdrop-blur-md shadow-xs"
+            : "py-5",
+        )}
+      >
+        <div className="container relative flex items-center justify-between">
+          <a
+            className="text-xl font-bold text-primary flex items-center"
+            href="#home"
+          >
+            <span className="relative z-10">
+              <span className="text-glow text-foreground">ShathaTech</span>{" "}
+              Portfolio
+            </span>
+          </a>
+
+          {/* desktop nav */}
+          <div className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2 rounded-full px-2 py-1.5 bg-background/60 backdrop-blur-md border border-primary/15 shadow-sm">
+            {navItems.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setActiveSection(item.href.substring(1))}
+                aria-current={isActive(item.href) ? "page" : undefined}
+                className={cn(
+                  "px-4 py-1.5 text-sm font-medium rounded-full transition-colors duration-300",
+                  isActive(item.href)
+                    ? "text-primary bg-primary/15"
+                    : "text-foreground/80 hover:text-primary hover:bg-primary/10",
+                )}
+              >
+                {item.name}
+              </a>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-1">
+            <MusicToggle />
+            <ThemeToggle />
+
+            <button
+              onClick={() => setIsMenuOpen(true)}
+              className="md:hidden p-2 text-foreground"
+              aria-label="Open menu"
+              aria-expanded={isMenuOpen}
+            >
+              <Menu size={24} />
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <div
+        onClick={closeMenu}
+        aria-hidden="true"
+        className={cn(
+          "fixed inset-0 z-50 bg-black/50 backdrop-blur-sm md:hidden transition-opacity duration-300",
+          isMenuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none",
+        )}
+      />
+
+      <aside
+        className={cn(
+          "fixed top-0 right-0 z-[60] h-full w-72 max-w-[80%] md:hidden",
+          "bg-card border-l border-primary/15 shadow-xl",
+          "flex flex-col transition-transform duration-300 ease-out",
+          isMenuOpen ? "translate-x-0" : "translate-x-full",
+        )}
+        aria-label="Mobile navigation"
+      >
+        <div className="flex items-center justify-between px-6 py-5 border-b border-border">
+          <button
+            onClick={closeMenu}
+            className="p-2 rounded-full text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+            aria-label="Close menu"
+          >
+            <X size={22} />
+          </button>
+        </div>
+
+        <nav className="flex flex-col gap-2 p-4">
           {navItems.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              onClick={() => setActiveSection(item.href.substring(1))}
               aria-current={isActive(item.href) ? "page" : undefined}
+              onClick={() => {
+                setActiveSection(item.href.substring(1));
+                closeMenu();
+              }}
               className={cn(
-                "px-4 py-1.5 text-sm font-medium rounded-full transition-colors duration-300",
+                "px-4 py-3 rounded-lg text-base font-medium transition-colors duration-300",
                 isActive(item.href)
                   ? "text-primary bg-primary/15"
                   : "text-foreground/80 hover:text-primary hover:bg-primary/10",
@@ -93,54 +180,8 @@ export const Navbar = () => {
               {item.name}
             </a>
           ))}
-        </div>
-
-        {/* right side: theme toggle + mobile menu button */}
-        <div className="flex items-center gap-1 z-50">
-          <ThemeToggle />
-
-          <button
-            onClick={() => setIsMenuOpen((prev) => !prev)}
-            className="md:hidden p-2 text-foreground"
-            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-
-        {/* mobile menu */}
-        <div
-          className={cn(
-            "fixed inset-0 bg-background/95 backdrop-blur-md z-40 flex flex-col items-center justify-center",
-            "transition-all duration-300 md:hidden",
-            isMenuOpen
-              ? "opacity-100 pointer-events-auto"
-              : "opacity-0 pointer-events-none",
-          )}
-        >
-          <div className="flex flex-col space-y-8 text-xl">
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                aria-current={isActive(item.href) ? "page" : undefined}
-                className={cn(
-                  "transition-colors duration-300",
-                  isActive(item.href)
-                    ? "text-primary font-semibold"
-                    : "text-foreground/80 hover:text-primary",
-                )}
-                onClick={() => {
-                  setActiveSection(item.href.substring(1));
-                  setIsMenuOpen(false);
-                }}
-              >
-                {item.name}
-              </a>
-            ))}
-          </div>
-        </div>
-      </div>
-    </nav>
+        </nav>
+      </aside>
+    </>
   );
 };

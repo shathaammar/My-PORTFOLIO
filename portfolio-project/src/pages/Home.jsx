@@ -1,8 +1,12 @@
 import { StarBackground } from "../components/StarBackground";
 import { Navbar } from "../components/Navbar";
 import { HeroSection } from "../components/HeroSection";
-import { AboutMe } from "../components/AboutMe";
-import { Skills } from "../components/Skills"
+import { AboutSection } from "../components/AboutSection";
+import { SkillsSection } from "../components/SkillsSection";
+import { ProjectsSection } from "../components/ProjectsSection";
+import { ContactSection } from "../components/ContactSection";
+import { Footer } from "../components/Footer"
+import { QuotesSection } from "../components/QuotesSection"
 
 export const Home = () => {
   return (
@@ -16,11 +20,15 @@ export const Home = () => {
       {/* Main Content */}
       <main>
         <HeroSection />
-        <AboutMe />
-        <Skills />
+        <AboutSection />
+        <QuotesSection />
+        <SkillsSection />
+        <ProjectsSection />
+        <ContactSection />
       </main>
 
       {/* Footer */}
+      <Footer />
     </div>
   );
 };

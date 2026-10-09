@@ -31,7 +31,7 @@ const skillCategories = [
   },
 ];
 
-export const Skills = () => {
+export const SkillsSection = () => {
   return (
     <section id="skills" className="py-24 px-4 relative bg-secondary/30">
       <div className="container mx-auto max-w-5xl">
@@ -54,7 +54,7 @@ export const Skills = () => {
                 {category.skills.map((skill) => (
                   <span
                     key={skill}
-                    className="px-3 py-1.5 rounded-full text-sm font-medium text-foreground bg-primary/5 border border-primary/20 hover:bg-primary/15 hover:border-primary/40 transition-colors duration-300"
+                    className="px-3 py-1.5 rounded-full text-sm font-medium text-foreground bg-primary/5 border border-primary/30 hover:bg-primary/15 hover:border-primary/40 transition-colors duration-300"
                   >
                     {skill}
                   </span>

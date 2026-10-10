@@ -1,19 +1,21 @@
 import { useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
 import {
+  ArrowUpRight,
   CircleCheck,
   CircleX,
   LoaderCircle,
   Mail,
   MapPin,
+  MessageSquare,
   Phone,
   Send,
+  User,
 } from "lucide-react";
 
-// lucide-react v1 removed brand icons, so these are inline SVGs.
 const Linkedin = (props) => (
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
-    <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.850 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z" />
+    <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z" />
   </svg>
 );
 
@@ -54,11 +56,42 @@ const socialLinks = [
 ];
 
 const inputClasses =
-  "w-full px-4 py-3 rounded-md border border-input bg-background text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors";
+  "w-full pl-11 pr-4 py-3 rounded-xl border border-primary/20 bg-background/60 text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors disabled:opacity-60";
+
+const rowClasses =
+  "group flex items-center gap-4 rounded-xl border border-primary/15 bg-background/40 p-3 pr-4 hover:border-primary/40 transition-colors duration-300";
+
+const iconBoxClasses =
+  "shrink-0 flex items-center justify-center h-11 w-11 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300";
 
 const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
 const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
 const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+const ContactRow = ({ icon: Icon, label, value, href }) => {
+  const content = (
+    <>
+      <div className={iconBoxClasses}>
+        <Icon className="h-5 w-5" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-xs text-muted-foreground">{label}</p>
+        <p className="font-medium text-foreground truncate">{value}</p>
+      </div>
+      {href && (
+        <ArrowUpRight className="h-4 w-4 shrink-0 text-primary opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+      )}
+    </>
+  );
+
+  return href ? (
+    <a href={href} className={rowClasses}>
+      {content}
+    </a>
+  ) : (
+    <div className={rowClasses}>{content}</div>
+  );
+};
 
 export const ContactSection = () => {
   const formRef = useRef(null);
@@ -83,8 +116,8 @@ export const ContactSection = () => {
   };
 
   return (
-    <section id="contact" className="py-24 px-4 relative bg-secondary/30">
-      <div className="container mx-auto max-w-5xl">
+    <section id="contact" className="py-24 px-4 relative">
+      <div className="container mx-auto max-w-6xl">
         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-center">
           Get In <span className="text-primary">Touch</span>
         </h2>
@@ -94,40 +127,27 @@ export const ContactSection = () => {
           I'm always open to discussing new opportunities.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-          {/* Contact Information */}
-          <div className="text-left">
-            <h3 className="text-2xl font-semibold mb-8">Contact Information</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-5 overflow-hidden rounded-3xl border border-primary/15 bg-card/70 backdrop-blur-sm shadow-lg">
+          <div className="relative lg:col-span-2 overflow-hidden p-8 md:p-10 bg-primary/10 border-b lg:border-b-0 lg:border-r border-primary/15 text-left">
+            <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-primary/30 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-24 -left-24 h-56 w-56 rounded-full bg-primary/20 blur-3xl" />
 
-            <div className="space-y-6">
-              {contactInfo.map(({ icon: Icon, label, value, href }) => (
-                <div key={label} className="flex items-center gap-4">
-                  <div className="shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-primary/10">
-                    <Icon className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm text-muted-foreground mb-0.5">
-                      {label}
-                    </p>
-                    {href ? (
-                      <a
-                        href={href}
-                        className="font-medium text-foreground hover:text-primary transition-colors break-all"
-                      >
-                        {value}
-                      </a>
-                    ) : (
-                      <span className="font-medium text-foreground">
-                        {value}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <div className="relative space-y-8">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-3">
+                  Let's talk
+                </p>
+                <h3 className="text-2xl md:text-3xl font-bold leading-snug">
+                  Have a project or a role in mind?
+                </h3>
+              </div>
 
-            <div className="mt-8 pt-8 border-t border-border">
-              <h4 className="font-semibold mb-4">Connect With Me</h4>
+              <div className="space-y-3">
+                {contactInfo.map((item) => (
+                  <ContactRow key={item.label} {...item} />
+                ))}
+              </div>
+
               <div className="flex flex-wrap gap-3">
                 {socialLinks.map(({ icon: Icon, label, href }) => (
                   <a
@@ -135,7 +155,7 @@ export const ContactSection = () => {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/10 text-primary font-medium text-sm hover:bg-primary hover:text-primary-foreground hover:-translate-y-0.5 transition-all duration-300"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/30 bg-background/40 text-primary font-medium text-sm hover:bg-primary hover:text-primary-foreground hover:-translate-y-0.5 transition-all duration-300"
                   >
                     <Icon className="h-4 w-4" />
                     {label}
@@ -145,43 +165,55 @@ export const ContactSection = () => {
             </div>
           </div>
 
-          {/* Message Form */}
-          <div className="text-left bg-card p-8 rounded-lg border border-border shadow-xs">
-            <h3 className="text-2xl font-semibold mb-6">Send a Message</h3>
+          <div className="lg:col-span-3 p-8 md:p-10 text-left">
+            <h3 className="text-2xl font-semibold mb-2">Send a Message</h3>
+            <p className="text-sm text-muted-foreground mb-8">
+              Fill out the form and your message will land straight in my inbox.
+            </p>
 
-            <form ref={formRef} className="space-y-6" onSubmit={handleSubmit}>
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium mb-2"
-                >
-                  Your Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  required
-                  placeholder="Your name..."
-                  className={inputClasses}
-                />
-              </div>
+            <form ref={formRef} className="space-y-5" onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium mb-2"
+                  >
+                    Your Name
+                  </label>
+                  <div className="relative">
+                    <User className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      required
+                      disabled={isSending}
+                      placeholder="Your name"
+                      className={inputClasses}
+                    />
+                  </div>
+                </div>
 
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium mb-2"
-                >
-                  Your Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  placeholder="you@example.com"
-                  className={inputClasses}
-                />
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium mb-2"
+                  >
+                    Your Email
+                  </label>
+                  <div className="relative">
+                    <Mail className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      required
+                      disabled={isSending}
+                      placeholder="you@example.com"
+                      className={inputClasses}
+                    />
+                  </div>
+                </div>
               </div>
 
               <div>
@@ -191,25 +223,29 @@ export const ContactSection = () => {
                 >
                   Your Message
                 </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  rows={5}
-                  required
-                  disabled={isSending}
-                  placeholder="Hello, I'd like to talk about..."
-                  className={`${inputClasses} resize-none`}
-                />
+                <div className="relative">
+                  <MessageSquare className="pointer-events-none absolute left-4 top-4 h-4 w-4 text-muted-foreground" />
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={6}
+                    required
+                    disabled={isSending}
+                    placeholder="Hello, I'd like to talk about..."
+                    className={`${inputClasses} resize-none`}
+                  />
+                </div>
               </div>
 
               <button
                 type="submit"
                 disabled={isSending}
-                className="cosmic-button w-full inline-flex items-center justify-center gap-2"
+                className="cosmic-button w-full inline-flex items-center justify-center gap-2 py-3 disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isSending ? (
                   <>
-                    Sending... <LoaderCircle size={16} className="animate-spin" />
+                    Sending...
+                    <LoaderCircle size={16} className="animate-spin" />
                   </>
                 ) : (
                   <>
@@ -219,14 +255,15 @@ export const ContactSection = () => {
               </button>
 
               {status === "success" && (
-                <div className="flex items-center gap-2 p-3 rounded-md bg-green-500/10 text-green-600 dark:text-green-400 text-sm">
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-green-500/10 text-green-600 dark:text-green-400 text-sm">
                   <CircleCheck size={18} className="shrink-0" />
-                  Thank you! Your message has been sent. I'll get back to you soon.
+                  Thank you! Your message has been sent. I'll get back to you
+                  soon.
                 </div>
               )}
 
               {status === "error" && (
-                <div className="flex items-center gap-2 p-3 rounded-md bg-red-500/10 text-red-600 dark:text-red-400 text-sm">
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 text-sm">
                   <CircleX size={18} className="shrink-0" />
                   Something went wrong. Please try again or email me directly.
                 </div>

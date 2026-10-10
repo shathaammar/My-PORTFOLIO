@@ -1,16 +1,31 @@
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import {
+  Briefcase,
+  ChevronRight,
+  Code,
+  Download,
+  FolderOpen,
+  House,
+  Mail,
+  Menu,
+  User,
+  X,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./ThemeToggle";
 import { MusicToggle } from "./MusicToggle";
 
 const navItems = [
-  { name: "Home", href: "#home" },
-  { name: "About", href: "#about" },
-  { name: "Skills", href: "#skills" },
-  { name: "Projects", href: "#projects" },
-  { name: "Contact", href: "#contact" },
+  { name: "Home", href: "#home", icon: House },
+  { name: "About", href: "#about", icon: User },
+  { name: "Experience", href: "#experience", icon: Briefcase },
+  { name: "Skills", href: "#skills", icon: Code },
+  { name: "Projects", href: "#projects", icon: FolderOpen },
+  { name: "Contact", href: "#contact", icon: Mail },
 ];
+
+const iconButtonClasses =
+  "flex items-center justify-center h-9 w-9 rounded-full border border-primary/30 bg-primary/5 text-foreground hover:bg-primary/15 hover:border-primary/50 hover:text-primary transition-colors duration-300";
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -44,7 +59,6 @@ export const Navbar = () => {
         });
       },
       {
-        // the section counts as active when it crosses the middle of the screen
         rootMargin: "-45% 0px -50% 0px",
       },
     );
@@ -94,7 +108,6 @@ export const Navbar = () => {
             </span>
           </a>
 
-          {/* desktop nav */}
           <div className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2 rounded-full px-2 py-1.5 bg-background/60 backdrop-blur-md border border-primary/15 shadow-sm">
             {navItems.map((item) => (
               <a
@@ -114,17 +127,17 @@ export const Navbar = () => {
             ))}
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             <MusicToggle />
             <ThemeToggle />
 
             <button
               onClick={() => setIsMenuOpen(true)}
-              className="md:hidden p-2 text-foreground"
+              className={cn(iconButtonClasses, "md:hidden")}
               aria-label="Open menu"
               aria-expanded={isMenuOpen}
             >
-              <Menu size={24} />
+              <Menu className="h-4 w-4" />
             </button>
           </div>
         </div>
@@ -143,44 +156,95 @@ export const Navbar = () => {
 
       <aside
         className={cn(
-          "fixed top-0 right-0 z-[60] h-full w-72 max-w-[80%] md:hidden",
-          "bg-card border-l border-primary/15 shadow-xl",
+          "fixed top-0 right-0 z-[60] h-full w-72 max-w-[85%] md:hidden",
+          "bg-card border-l border-primary/15 shadow-2xl",
           "flex flex-col transition-transform duration-300 ease-out",
           isMenuOpen ? "translate-x-0" : "translate-x-full",
         )}
         aria-label="Mobile navigation"
       >
-        <div className="flex items-center justify-between px-6 py-5 border-b border-border">
+        <div className="flex items-center justify-between px-5 py-5 border-b border-border">
+          <div className="text-left">
+            <p className="font-bold text-lg leading-tight">
+              Shatha <span className="text-primary">Ammar</span>
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Full Stack Developer
+            </p>
+          </div>
+
           <button
             onClick={closeMenu}
-            className="p-2 rounded-full text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+            className={iconButtonClasses}
             aria-label="Close menu"
           >
-            <X size={22} />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        <nav className="flex flex-col gap-2 p-4">
-          {navItems.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              aria-current={isActive(item.href) ? "page" : undefined}
-              onClick={() => {
-                setActiveSection(item.href.substring(1));
-                closeMenu();
-              }}
-              className={cn(
-                "px-4 py-3 rounded-lg text-base font-medium transition-colors duration-300",
-                isActive(item.href)
-                  ? "text-primary bg-primary/15"
-                  : "text-foreground/80 hover:text-primary hover:bg-primary/10",
-              )}
-            >
-              {item.name}
-            </a>
-          ))}
+        <nav className="flex-1 overflow-y-auto overflow-x-hidden flex flex-col gap-1 p-4">
+          {navItems.map((item, index) => {
+            const Icon = item.icon;
+            const active = isActive(item.href);
+
+            return (
+              <a
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                onClick={() => {
+                  setActiveSection(item.href.substring(1));
+                  closeMenu();
+                }}
+                style={{
+                  transitionDelay: isMenuOpen ? `${100 + index * 40}ms` : "0ms",
+                }}
+                className={cn(
+                  "group flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all duration-300",
+                  isMenuOpen
+                    ? "opacity-100 translate-x-0"
+                    : "opacity-0 translate-x-6",
+                  active
+                    ? "bg-primary/10 text-primary"
+                    : "text-foreground/80 hover:bg-primary/5 hover:text-primary",
+                )}
+              >
+                <span
+                  className={cn(
+                    "flex items-center justify-center h-9 w-9 rounded-lg transition-colors duration-300",
+                    active
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-primary/10 text-primary group-hover:bg-primary/20",
+                  )}
+                >
+                  <Icon className="h-4 w-4" />
+                </span>
+
+                <span>{item.name}</span>
+
+                <ChevronRight
+                  className={cn(
+                    "h-4 w-4 ml-auto transition-all duration-300",
+                    active
+                      ? "opacity-100 translate-x-0"
+                      : "opacity-0 -translate-x-1 group-hover:opacity-60 group-hover:translate-x-0",
+                  )}
+                />
+              </a>
+            );
+          })}
         </nav>
+
+        <div className="p-4 border-t border-border">
+          <a
+            href="/Shatha_Ammar_CV.pdf"
+            download="Shatha_Ammar_CV.pdf"
+            className="cosmic-button w-full inline-flex items-center justify-center gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Download CV
+          </a>
+        </div>
       </aside>
     </>
   );

@@ -35,12 +35,12 @@ export const MusicToggle = () => {
           isPlaying ? "Mute background music" : "Play background music"
         }
         title={isPlaying ? "Mute music" : "Play music"}
-        className="p-2 rounded-full text-primary hover:bg-primary/10 transition-colors duration-300"
+        className="flex items-center justify-center h-9 w-9 rounded-full border border-primary/30 bg-primary/5 text-primary hover:bg-primary/15 hover:border-primary/50 transition-colors duration-300"
       >
         {isPlaying ? (
-          <Volume2 className="h-5 w-5" />
+          <Volume2 className="h-4 w-4" />
         ) : (
-          <VolumeX className="h-5 w-5" />
+          <VolumeX className="h-4 w-4" />
         )}
       </button>
     </>
